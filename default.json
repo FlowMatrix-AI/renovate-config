@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "description": "FlowMatrix-AI org baseline - safe for all repo types",
   "extends": ["config:recommended"],
