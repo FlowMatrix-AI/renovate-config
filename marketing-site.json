@@ -4,12 +4,6 @@
   "extends": ["local>FlowMatrix-AI/renovate-config"],
   "rangeStrategy": "bump",
   "npmrc": "@flowmatrix-ai:registry=https://npm.pkg.github.com",
-  "hostRules": [
-    {
-      "matchHost": "npm.pkg.github.com",
-      "hostType": "npm"
-    }
-  ],
   "lockFileMaintenance": {
     "automerge": true
   },
