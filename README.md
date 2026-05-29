@@ -1,11 +1,19 @@
 # renovate-config
 
-Org-wide [Renovate](https://docs.renovatebot.com/) shared preset for FlowMatrix-AI.
+Org-wide [Renovate](https://docs.renovatebot.com/) shared presets for FlowMatrix-AI.
 
-## Usage
+## Presets
 
-In any repo's `renovate.json`:
+### `default` — Org baseline
 
+Safe for **any** repo type (Node, Python, Terraform, etc.). Provides only:
+
+- Weekly schedule (before 7am Monday, Eastern)
+- `dependencies` label on PRs
+- Max 5 concurrent PRs
+- Renovate's `config:recommended` base
+
+**Usage:**
 ```json
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
@@ -13,17 +21,25 @@ In any repo's `renovate.json`:
 }
 ```
 
-## What the preset provides
+### `marketing-site` — Marketing fleet sites
 
-- **Schedule:** Weekly, before 7am Monday (America/New_York)
-- **Registry auth:** `npm.pkg.github.com` configured via `hostRules` (uses Renovate App token)
-- **Lock file maintenance:** automerged weekly
-- **Package rules:**
-  - Non-major npm updates: grouped, automerged
-  - Non-major GitHub Actions: grouped, automerged
-  - Tailwind packages: grouped, automerged
-  - `@flowmatrix-ai/*` internal packages: grouped, **not** automerged (manual review)
+Extends `default`. For repos consuming `@flowmatrix-ai/site-components`. Adds:
+
+- GitHub Packages registry auth (`npm.pkg.github.com` via Renovate App token)
+- Non-major npm updates: grouped, automerged
+- Non-major GitHub Actions: grouped, automerged
+- Tailwind packages: grouped, automerged
+- `@flowmatrix-ai/*` internal packages: grouped, **not** automerged (manual review)
+- Lock file maintenance: automerged
+
+**Usage:**
+```json
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["local>FlowMatrix-AI/renovate-config:marketing-site"]
+}
+```
 
 ## Auth for private packages
 
-The `hostRules` entry for `npm.pkg.github.com` allows the Renovate GitHub App to use its installation token for package lookups. If this doesn't work (App token lacks `packages:read`), you'll need to add an encrypted PAT via [Renovate's encryption](https://app.renovatebot.com/encrypt).
+The `hostRules` entry in `marketing-site.json` lets the Renovate GitHub App use its installation token for `npm.pkg.github.com` lookups. If the App token lacks `packages:read`, add an encrypted PAT via [Renovate's encryption endpoint](https://app.renovatebot.com/encrypt).

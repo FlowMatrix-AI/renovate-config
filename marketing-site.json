@@ -1,0 +1,44 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "FlowMatrix-AI marketing site fleet preset",
+  "extends": ["local>FlowMatrix-AI/renovate-config"],
+  "rangeStrategy": "bump",
+  "npmrc": "@flowmatrix-ai:registry=https://npm.pkg.github.com",
+  "hostRules": [
+    {
+      "matchHost": "npm.pkg.github.com",
+      "hostType": "npm"
+    }
+  ],
+  "lockFileMaintenance": {
+    "automerge": true
+  },
+  "packageRules": [
+    {
+      "description": "Group and automerge non-major npm updates",
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchManagers": ["npm"],
+      "groupName": "npm non-major",
+      "automerge": true
+    },
+    {
+      "description": "Group and automerge non-major GitHub Actions",
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions non-major",
+      "automerge": true
+    },
+    {
+      "description": "Group Tailwind packages together (all update types)",
+      "matchPackageNames": ["tailwindcss", "@tailwindcss/*"],
+      "groupName": "tailwind",
+      "automerge": true
+    },
+    {
+      "description": "Internal packages - separate PR, require manual review",
+      "matchPackageNames": ["@flowmatrix-ai/**"],
+      "groupName": "flowmatrix internal",
+      "automerge": false
+    }
+  ]
+}
