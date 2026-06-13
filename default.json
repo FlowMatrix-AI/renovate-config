@@ -5,5 +5,8 @@
   "schedule": ["before 7am on Monday"],
   "timezone": "America/New_York",
   "labels": ["dependencies"],
-  "prConcurrentLimit": 5
+  "prConcurrentLimit": 5,
+  "minimumReleaseAge": "3 days",
+  "internalChecksFilter": "strict",
+  "osvVulnerabilityAlerts": true
 }

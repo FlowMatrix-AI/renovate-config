@@ -33,6 +33,11 @@
       "matchPackageNames": ["@flowmatrix-ai/**"],
       "groupName": "flowmatrix internal",
       "automerge": false
+    },
+    {
+      "description": "Safety guard: never automerge major updates (must stay last to override the group rules above)",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
     }
   ]
 }
