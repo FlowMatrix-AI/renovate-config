@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "description": "FlowMatrix-AI org baseline - safe for all repo types",
-  "extends": ["config:recommended"],
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
   "schedule": ["before 7am on Monday"],
   "timezone": "America/New_York",
   "labels": ["dependencies"],
