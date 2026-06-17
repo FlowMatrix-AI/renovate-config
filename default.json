@@ -8,5 +8,21 @@
   "prConcurrentLimit": 5,
   "minimumReleaseAge": "3 days",
   "internalChecksFilter": "strict",
-  "osvVulnerabilityAlerts": true
+  "osvVulnerabilityAlerts": true,
+  "lockFileMaintenance": { "automerge": true },
+  "packageRules": [
+    {
+      "description": "Conservative automerge: digest/pin updates for language + CI-action managers only. Terraform/Docker/custom (i.e. infra) are excluded so they stay manual. Gated by required ok + gitleaks checks.",
+      "matchManagers": ["github-actions", "npm", "pep621", "uv", "cargo", "gomod", "pre-commit"],
+      "matchUpdateTypes": ["pin", "pinDigest", "digest"],
+      "automerge": true
+    },
+    {
+      "description": "Conservative automerge: stable (>=1.0.0) patch updates for language + CI-action managers only. Terraform/Docker/custom excluded; minors/majors stay manual.",
+      "matchManagers": ["github-actions", "npm", "pep621", "uv", "cargo", "gomod", "pre-commit"],
+      "matchUpdateTypes": ["patch"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
+    }
+  ]
 }
