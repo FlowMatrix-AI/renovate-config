@@ -53,6 +53,24 @@ Extends `default`. For repos consuming `@flowmatrix-ai/site-components`. Adds:
 }
 ```
 
+## Required repo setting: "Allow auto-merge"
+
+The presets above set `automerge: true` on low-risk update types, but that only
+takes effect if the **repository setting "Allow auto-merge" is enabled**.
+Renovate uses GitHub *platform* automerge by default, which **silently no-ops**
+when the repo setting is off — PRs then sit open until merged by hand (this is
+exactly what stranded the sites fleet's pin/patch PRs).
+
+Enable it per repo:
+```sh
+gh api -X PATCH repos/FlowMatrix-AI/<repo> -F allow_auto_merge=true
+```
+It is safe: auto-merge still fires only when the required checks (`ok` +
+`gitleaks / gitleaks`) pass, branch protection is unchanged, and only renovate
+PRs the presets mark `automerge: true` (non-major pins/digests/patches)
+self-merge. The sites/marketing fleet (`tier=sites` + `site-platform`) has it
+on; the drift-audit flags any fleet repo where it regresses (`auto-merge-off`).
+
 ## Auth for private packages
 
 The `npmrc` entry in `marketing-site.json` points the `@flowmatrix-ai` scope at
