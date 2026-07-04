@@ -1,7 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "description": "FlowMatrix-AI marketing site fleet preset",
-  "extends": ["local>FlowMatrix-AI/renovate-config"],
+  "extends": [
+    "local>FlowMatrix-AI/renovate-config"
+  ],
   "rangeStrategy": "bump",
   "npmrc": "@flowmatrix-ai:registry=https://npm.pkg.github.com",
   "lockFileMaintenance": {
@@ -10,33 +12,61 @@
   "packageRules": [
     {
       "description": "Group and automerge non-major npm updates",
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchManagers": ["npm"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchManagers": [
+        "npm"
+      ],
       "groupName": "npm non-major",
       "automerge": true
     },
     {
       "description": "Group and automerge non-major GitHub Actions",
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "github-actions non-major",
       "automerge": true
     },
     {
       "description": "Group Tailwind packages together (all update types)",
-      "matchPackageNames": ["tailwindcss", "@tailwindcss/*"],
+      "matchPackageNames": [
+        "tailwindcss",
+        "@tailwindcss/*"
+      ],
       "groupName": "tailwind",
       "automerge": true
     },
     {
-      "description": "Internal packages - separate PR, require manual review",
-      "matchPackageNames": ["@flowmatrix-ai/**"],
+      "description": "site-functions is RUNTIME-ONLY (never executed by site CI) and exact-pinned - propagation is deliberate via the engine's fleet-bump PRs, not Renovate (phase-12 D3 pin model)",
+      "matchPackageNames": [
+        "@flowmatrix-ai/site-functions"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Internal packages - minor/patch automerge (CI executes these via astro build, so a bad minor fails the PR; phase-12 D4). Majors stay manual via the last rule.",
+      "matchPackageNames": [
+        "@flowmatrix-ai/**"
+      ],
       "groupName": "flowmatrix internal",
-      "automerge": false
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "automerge": true
     },
     {
       "description": "Safety guard: never automerge major updates (must stay last to override the group rules above)",
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "automerge": false
     }
   ]
