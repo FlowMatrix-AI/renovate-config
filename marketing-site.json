@@ -63,6 +63,16 @@
       "automerge": true
     },
     {
+      "description": "Hold TypeScript MAJOR behind Dependency-Dashboard approval instead of auto-opening a PR. TS7 (Go-native, GA 2026-07-08) ships without a stable programmatic compiler API until TS 7.1 (~Oct 2026), so @astrojs/check (peer: typescript ^5||^6) — which powers `astro check` — refuses it and the bump fails CI fleet-wide. Dashboard approval keeps the TS major VISIBLE + one-click on the dashboard (never silently dropped like allowedVersions would), so it is not forgotten: tick the box to re-test once @astrojs/check widens its peer range to include ^7. TS minor/patch still auto-flow.",
+      "matchPackageNames": [
+        "typescript"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "dependencyDashboardApproval": true
+    },
+    {
       "description": "Safety guard: never automerge major updates (must stay last to override the group rules above)",
       "matchUpdateTypes": [
         "major"
