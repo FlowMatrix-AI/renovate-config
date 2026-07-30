@@ -9,6 +9,7 @@
   "minimumReleaseAge": "3 days",
   "internalChecksFilter": "strict",
   "osvVulnerabilityAlerts": true,
+  "constraints": { "npm": "^11" },
   "lockFileMaintenance": { "automerge": true },
   "packageRules": [
     {
