@@ -5,7 +5,6 @@
     "local>FlowMatrix-AI/renovate-config"
   ],
   "rangeStrategy": "bump",
-  "npmrc": "@flowmatrix-ai:registry=https://npm.pkg.github.com",
   "lockFileMaintenance": {
     "automerge": true
   },

@@ -10,6 +10,7 @@
   "internalChecksFilter": "strict",
   "osvVulnerabilityAlerts": true,
   "constraints": { "npm": "^11" },
+  "npmrc": "@flowmatrix-ai:registry=https://npm.pkg.github.com",
   "lockFileMaintenance": { "enabled": true, "automerge": true },
   "packageRules": [
     {
