@@ -43,6 +43,15 @@
       "automerge": true
     },
     {
+      "description": "Group the Astro framework + its adapters/integrations together across ALL update types, so a major (e.g. astro 6->7 with @astrojs/cloudflare 13->14 and @astrojs/preact 4->6) lands as ONE coherent PR. Renovate otherwise opens a separate PR per package for majors, and a partial bump leaves the set incompatible (the adapter peers a specific astro major) and fails the build with `Missing field moduleType`. See checkout-site-engine#154. Majors still do not automerge (the last rule guards that) - the grouped PR opens for review.",
+      "matchPackageNames": [
+        "astro",
+        "@astrojs/*"
+      ],
+      "groupName": "astro",
+      "automerge": true
+    },
+    {
       "description": "site-functions is RUNTIME-ONLY (never executed by site CI) and exact-pinned - propagation is deliberate via the engine's fleet-bump PRs, not Renovate (phase-12 D3 pin model)",
       "matchPackageNames": [
         "@flowmatrix-ai/site-functions"
