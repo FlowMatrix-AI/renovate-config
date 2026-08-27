@@ -14,6 +14,15 @@
   "lockFileMaintenance": { "enabled": true, "automerge": true },
   "packageRules": [
     {
+      "description": "Route the three PUBLIC engine packages at npmjs. Every other @flowmatrix-ai package (brand, the eight checkout-*, site-generator) is GitHub-Packages-only and 404s on npmjs, which is why the scope-wide npmrc above stays pointed there. GitHub Packages answers 401 to an unauthenticated reader even for these three, so a Renovate lookup without a token finds nothing and proposes no update - the failure mode is silence, not an error. Verified 2026-08-27 by unauthenticated GET: site-components/site-config/site-functions => 200 on npmjs; brand, site-generator and every checkout-* => 404; all thirteen => 401 on GitHub Packages. First in the list so it only sets a registry and leaves the automerge rules below to decide merging.",
+      "matchPackageNames": [
+        "@flowmatrix-ai/site-components",
+        "@flowmatrix-ai/site-config",
+        "@flowmatrix-ai/site-functions"
+      ],
+      "registryUrls": ["https://registry.npmjs.org"]
+    },
+    {
       "description": "Conservative automerge: digest/pin updates for language + CI-action managers only. Terraform/Docker/custom (i.e. infra) are excluded so they stay manual. Gated by required ok + gitleaks checks.",
       "matchManagers": ["github-actions", "npm", "pep621", "uv", "cargo", "gomod", "pre-commit"],
       "matchUpdateTypes": ["pin", "pinDigest", "digest"],
