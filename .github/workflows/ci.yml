@@ -26,6 +26,11 @@ jobs:
           set -euo pipefail
           # Every root-level JSON is a preset here. Globbed, not listed: a
           # hand-written list is how a new preset ships unvalidated, and the
+          # The bin comes from the `renovate` package deliberately: the npm
+          # package literally named `renovate-config-validator` is a
+          # PLACEHOLDER whose own description says the real CLI ships inside
+          # `renovate`. `npx renovate-config-validator` would run the stub
+          # and pass vacuously.
           # validator only checks STANDARD config filenames when given no
           # paths — which would silently skip default.json and
           # marketing-site.json, the two files that actually matter.
@@ -36,4 +41,4 @@ jobs:
             exit 1
           fi
           echo "validating: ${files[*]}"
-          npx --yes --package renovate@41.0.0 renovate-config-validator --strict "${files[@]}"
+          npx --yes --package renovate@44.48.1 renovate-config-validator --strict "${files[@]}"
