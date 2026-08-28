@@ -9,31 +9,28 @@ permissions:
   contents: read
 
 jobs:
-  # Standardized org-wide required check. See FlowMatrix-AI/eng-governance.
-  #
   # This repo publishes the presets every other repo's dependency automation
-  # extends, and until now it had no check of its own: `ok` was a trivial
-  # always-pass gate. A broken preset does not fail loudly — the repos extending
-  # it stop getting updates — so an error here is silent, estate-wide.
-  ok:
-    name: ok
+  # extends. A broken preset does not fail loudly — Renovate falls back and the
+  # repos extending it quietly stop getting updates — so an error here is
+  # silent, estate-wide. Hence a real check rather than review attention.
+  validate:
+    name: validate
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      # renovate declares engines.node ^24.11.0 and has moved its Node floor
+      # twice this year. npm's engine-strict defaults to false, so a drift would
+      # surface as a warning rather than a failure — pin the runtime instead.
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: "24"
 
       - name: Validate presets
         run: |
           set -euo pipefail
           # Every root-level JSON is a preset here. Globbed, not listed: a
-          # hand-written list is how a new preset ships unvalidated, and the
-          # The bin comes from the `renovate` package deliberately: the npm
-          # package literally named `renovate-config-validator` is a
-          # PLACEHOLDER whose own description says the real CLI ships inside
-          # `renovate`. `npx renovate-config-validator` would run the stub
-          # and pass vacuously.
-          # validator only checks STANDARD config filenames when given no
-          # paths — which would silently skip default.json and
-          # marketing-site.json, the two files that actually matter.
+          # hand-written list is how a new preset ships unvalidated.
           shopt -s nullglob
           files=(*.json)
           if [ ${#files[@]} -eq 0 ]; then
@@ -41,4 +38,52 @@ jobs:
             exit 1
           fi
           echo "validating: ${files[*]}"
-          npx --yes --package renovate@44.48.1 renovate-config-validator --strict "${files[@]}"
+          # --package renovate: the npm package literally named
+          #   `renovate-config-validator` is a PLACEHOLDER with no bin, so a
+          #   plain `npx renovate-config-validator` runs the stub and passes
+          #   vacuously.
+          # explicit paths: with no arguments the validator only checks STANDARD
+          #   config filenames, which would silently skip the two files that
+          #   actually matter.
+          # --no-global: given explicit paths the validator defaults to treating
+          #   them as GLOBAL self-hosted config. These are repo-level presets,
+          #   and the difference is not cosmetic — a preset carrying a
+          #   global-only option passes without this flag. See #35.
+          npx --yes --package renovate@44.48.1 renovate-config-validator \
+            --strict --no-global "${files[@]}"
+
+      # A check that cannot fail is indistinguishable from no check. Prove the
+      # validator rejects a bad preset, and — by using a global-only option —
+      # that --no-global above is actually in effect.
+      - name: Prove the validator can fail
+        run: |
+          set -euo pipefail
+          tmp=$(mktemp -d)
+          echo '{"autodiscover":true}' > "$tmp/broken.json"
+          if npx --yes --package renovate@44.48.1 renovate-config-validator \
+               --strict --no-global "$tmp/broken.json" 2>/dev/null; then
+            echo "::error::validator accepted a global-only option in a repo preset — the check is not doing its job"
+            exit 1
+          fi
+          echo "ok: validator rejects a global-only option in repo-config mode"
+
+      # Schema validation cannot catch a config that is well-formed but
+      # semantically incomplete. See the script's docstring.
+      - name: Check ecosystem groups are coherent under vulnerabilityAlerts
+        run: python3 scripts/check-group-coherence.py
+
+  # Standardized org-wide required check (see require-ci-ok ruleset).
+  ok:
+    name: ok
+    needs: [validate]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify all required jobs succeeded
+        run: |
+          results="${{ join(needs.*.result, ',') }}"
+          echo "needs results: $results"
+          case "$results" in
+            *failure*|*cancelled*) echo "::error::a required CI job did not succeed"; exit 1 ;;
+          esac
+          echo "ok"
