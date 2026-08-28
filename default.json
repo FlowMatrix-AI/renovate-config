@@ -12,6 +12,19 @@
   "constraints": { "npm": "^11" },
   "npmrc": "@flowmatrix-ai:registry=https://npm.pkg.github.com",
   "lockFileMaintenance": { "enabled": true, "automerge": true },
+  "vulnerabilityAlerts": {
+    "description": "Renovate's built-in default for this block sets groupName: null, which OVERRIDES any groupName a packageRules entry would otherwise apply. A security update is therefore deliberately un-grouped - fine for a self-contained dependency, actively harmful for an ecosystem whose packages must move together. Re-establish grouping for those ecosystems here. The outer groupName stays null so unrelated security fixes are still not batched; schedule and minimumReleaseAge are pinned to Renovate's vulnerabilityAlerts defaults explicitly so a security fix is never held by the Monday schedule or the 3-day soak above. Rule of thumb: if packages are grouped because a partial update breaks the build, that grouping MUST be repeated here. See #31.",
+    "groupName": null,
+    "schedule": [],
+    "minimumReleaseAge": null,
+    "packageRules": [
+      {
+        "description": "Astro must move as a set under a security advisory too. On 2026-07/08 three repos took a lone `astro` 6->7 security bump with no @astrojs/* companions; the adapter peers a specific astro major, so all three failed on arrival and sat red for a month while six XSS advisories stayed open. Distinct group name from the routine `astro` group so a security remediation is never entangled with a pending routine major.",
+        "matchPackageNames": ["astro", "@astrojs/*"],
+        "groupName": "astro security"
+      }
+    ]
+  },
   "packageRules": [
     {
       "description": "Route the three PUBLIC engine packages at npmjs. Every other @flowmatrix-ai package (brand, the eight checkout-*, site-generator) is GitHub-Packages-only and 404s on npmjs, which is why the scope-wide npmrc above stays pointed there. GitHub Packages answers 401 to an unauthenticated reader even for these three, so a Renovate lookup without a token finds nothing and proposes no update - the failure mode is silence, not an error. Verified 2026-08-27 by unauthenticated GET: site-components/site-config/site-functions => 200 on npmjs; brand, site-generator and every checkout-* => 404; all thirteen => 401 on GitHub Packages. First in the list so it only sets a registry and leaves the automerge rules below to decide merging.",
@@ -21,6 +34,11 @@
         "@flowmatrix-ai/site-functions"
       ],
       "registryUrls": ["https://registry.npmjs.org"]
+    },
+    {
+      "description": "Group the astro framework with its adapters and integrations across ALL update types, so a major lands as one coherent PR. The adapter peers a specific astro major (@astrojs/cloudflare 13 peers astro ^6, 14 peers astro ^7), so a partial bump leaves the set incompatible and the build fails - `Missing field moduleType` on the Cloudflare stack, a rolldown binding error elsewhere. marketing-site.json carries its own copy of this rule because it must also set automerge and must win over that preset's `npm non-major` group; this one exists so the 52 repos on the bare default preset are covered too. No automerge key here: default.json never automerges anything above a patch. See checkout-site-engine#154.",
+      "matchPackageNames": ["astro", "@astrojs/*"],
+      "groupName": "astro"
     },
     {
       "description": "Conservative automerge: digest/pin updates for language + CI-action managers only. Terraform/Docker/custom (i.e. infra) are excluded so they stay manual. Gated by required ok + gitleaks checks.",
