@@ -1,7 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "description": "FlowMatrix-AI marketing site fleet preset",
-  "extends": ["local>FlowMatrix-AI/renovate-config"],
+  "extends": [
+    "local>FlowMatrix-AI/renovate-config"
+  ],
   "rangeStrategy": "bump",
   "lockFileMaintenance": {
     "automerge": true
@@ -9,46 +11,83 @@
   "packageRules": [
     {
       "description": "Group and automerge non-major npm updates",
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchManagers": ["npm"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchManagers": [
+        "npm"
+      ],
       "groupName": "npm non-major",
       "automerge": true
     },
     {
       "description": "Group and automerge non-major GitHub Actions",
-      "matchUpdateTypes": ["minor", "patch"],
-      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchManagers": [
+        "github-actions"
+      ],
       "groupName": "github-actions non-major",
       "automerge": true
     },
     {
       "description": "Group Tailwind packages together (all update types)",
-      "matchPackageNames": ["tailwindcss", "@tailwindcss/*"],
+      "matchPackageNames": [
+        "tailwindcss",
+        "@tailwindcss/*"
+      ],
       "groupName": "tailwind",
       "automerge": true
     },
     {
       "description": "Group the Astro framework + its adapters/integrations together across ALL update types, so a major (e.g. astro 6->7 with @astrojs/cloudflare 13->14 and @astrojs/preact 4->6) lands as ONE coherent PR. Renovate otherwise opens a separate PR per package for majors, and a partial bump leaves the set incompatible (the adapter peers a specific astro major) and fails the build with `Missing field moduleType`. See checkout-site-engine#154. Majors still do not automerge (the last rule guards that) - the grouped PR opens for review.",
-      "matchPackageNames": ["astro", "@astrojs/*"],
+      "matchPackageNames": [
+        "astro",
+        "@astrojs/*"
+      ],
       "groupName": "astro",
       "automerge": true
     },
     {
+      "description": "Group wrangler with the @cloudflare packages and do not separate majors. Carried here as well as in default.json for the same reason the astro rule is: this preset groups all non-major npm updates as `npm non-major`, so without a later rule a wrangler MINOR would land in that group while the @cloudflare/workers-types MAJOR it requires landed separately -- which is precisely how happy-house-bathrooms#45 and #57 split. Majors still do not automerge (the last rule guards that).",
+      "matchPackageNames": [
+        "wrangler",
+        "@cloudflare/*"
+      ],
+      "groupName": "cloudflare",
+      "separateMajorMinor": false,
+      "automerge": true
+    },
+    {
       "description": "Internal packages - minor/patch automerge. site-functions was excluded here until 2026-08-23 on the grounds that it is runtime-only and never executed by site CI, which left fleet-bump as its only carrier - and nothing ran fleet-bump, so a security fix sat undeployed on 9 of 10 sites for ten days (marketing-site-engine#460). Two things make the exclusion unnecessary: `astro check` DOES typecheck functions/, so a type-breaking change fails the PR; and the fleet smoke now POSTs a honeypot-filled body to each deployed handler daily, so a bundle that ships broken is caught within a day rather than when a customer submits a form. Majors still stay manual via the last rule.",
-      "matchPackageNames": ["@flowmatrix-ai/**"],
+      "matchPackageNames": [
+        "@flowmatrix-ai/**"
+      ],
       "groupName": "flowmatrix internal",
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "automerge": true
     },
     {
       "description": "Hold TypeScript MAJOR behind Dependency-Dashboard approval instead of auto-opening a PR. TS7 (Go-native, GA 2026-07-08) ships without a stable programmatic compiler API until TS 7.1 (~Oct 2026), so @astrojs/check (peer: typescript ^5||^6) \u2014 which powers `astro check` \u2014 refuses it and the bump fails CI fleet-wide. Dashboard approval keeps the TS major VISIBLE + one-click on the dashboard (never silently dropped like allowedVersions would), so it is not forgotten: tick the box to re-test once @astrojs/check widens its peer range to include ^7. TS minor/patch still auto-flow.",
-      "matchPackageNames": ["typescript"],
-      "matchUpdateTypes": ["major"],
+      "matchPackageNames": [
+        "typescript"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "dependencyDashboardApproval": true
     },
     {
       "description": "Safety guard: never automerge major updates (must stay last to override the group rules above)",
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "automerge": false
     }
   ]
