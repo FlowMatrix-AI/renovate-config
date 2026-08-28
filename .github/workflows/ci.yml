@@ -67,6 +67,11 @@ jobs:
           fi
           echo "ok: validator rejects a global-only option in repo-config mode"
 
+      # Schema validation cannot catch a config that is well-formed but
+      # semantically incomplete. See the script's docstring.
+      - name: Check ecosystem groups are coherent under vulnerabilityAlerts
+        run: python3 scripts/check-group-coherence.py
+
   # Standardized org-wide required check (see require-ci-ok ruleset).
   ok:
     name: ok

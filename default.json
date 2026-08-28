@@ -19,6 +19,11 @@
     "minimumReleaseAge": null,
     "packageRules": [
       {
+        "description": "Tailwind must move as a set under a security advisory too. @tailwindcss/postcss and @tailwindcss/vite each carry an EXACT `tailwindcss` dependency (4.3.3 depends on tailwindcss 4.3.3, not a range), so a lone `tailwindcss` bump desyncs the tree rather than upgrading it. Same shape as the astro rule below.",
+        "matchPackageNames": ["tailwindcss", "@tailwindcss/*"],
+        "groupName": "tailwind security"
+      },
+      {
         "description": "Astro must move as a set under a security advisory too. On 2026-07/08 three repos took a lone `astro` 6->7 security bump with no @astrojs/* companions; the adapter peers a specific astro major, so all three failed on arrival and sat red for a month while six XSS advisories stayed open. Distinct group name from the routine `astro` group so a security remediation is never entangled with a pending routine major.",
         "matchPackageNames": ["astro", "@astrojs/*"],
         "groupName": "astro security"
