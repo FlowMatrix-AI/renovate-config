@@ -36,6 +36,11 @@
       "registryUrls": ["https://registry.npmjs.org"]
     },
     {
+      "description": "Group the astro framework with its adapters and integrations across ALL update types, so a major lands as one coherent PR. The adapter peers a specific astro major (@astrojs/cloudflare 13 peers astro ^6, 14 peers astro ^7), so a partial bump leaves the set incompatible and the build fails - `Missing field moduleType` on the Cloudflare stack, a rolldown binding error elsewhere. marketing-site.json carries its own copy of this rule because it must also set automerge and must win over that preset's `npm non-major` group; this one exists so the 52 repos on the bare default preset are covered too. No automerge key here: default.json never automerges anything above a patch. See checkout-site-engine#154.",
+      "matchPackageNames": ["astro", "@astrojs/*"],
+      "groupName": "astro"
+    },
+    {
       "description": "Conservative automerge: digest/pin updates for language + CI-action managers only. Terraform/Docker/custom (i.e. infra) are excluded so they stay manual. Gated by required ok + gitleaks checks.",
       "matchManagers": ["github-actions", "npm", "pep621", "uv", "cargo", "gomod", "pre-commit"],
       "matchUpdateTypes": ["pin", "pinDigest", "digest"],
