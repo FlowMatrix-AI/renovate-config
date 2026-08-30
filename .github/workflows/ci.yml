@@ -16,6 +16,21 @@ jobs:
   validate:
     name: validate
     runs-on: ubuntu-latest
+    # The validator version must track the version the MEND HOSTED BOT runs, not
+    # npm's latest. A validator AHEAD of the bot is the dangerous direction: it
+    # accepts config the bot then rejects, so CI goes green over a preset that
+    # fails in production. Behind is safe — anything it accepts, the bot accepts.
+    #
+    # #34 set this from `npm view renovate` (44.48.1) while the bot was on
+    # 44.46.0, i.e. ahead. See #37.
+    #
+    # Read the current bot version from the base64 `renovate-debug` blob at the
+    # bottom of any OPEN Renovate PR body (`updatedInVer`). It must be an OPEN
+    # PR: the field freezes when a PR is merged, so this repo's own merged PRs
+    # report 44.39.0 and would be badly stale. eng-governance's drift-audit
+    # checks this automatically and flags the pin only when it goes ahead.
+    env:
+      RENOVATE_VERSION: "44.49.0" # Mend hosted bot as of 2026-08-30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -49,7 +64,7 @@ jobs:
           #   them as GLOBAL self-hosted config. These are repo-level presets,
           #   and the difference is not cosmetic — a preset carrying a
           #   global-only option passes without this flag. See #35.
-          npx --yes --package renovate@44.48.1 renovate-config-validator \
+          npx --yes --package "renovate@${RENOVATE_VERSION}" renovate-config-validator \
             --strict --no-global "${files[@]}"
 
       # A check that cannot fail is indistinguishable from no check. Prove the
@@ -60,7 +75,7 @@ jobs:
           set -euo pipefail
           tmp=$(mktemp -d)
           echo '{"autodiscover":true}' > "$tmp/broken.json"
-          if npx --yes --package renovate@44.48.1 renovate-config-validator \
+          if npx --yes --package "renovate@${RENOVATE_VERSION}" renovate-config-validator \
                --strict --no-global "$tmp/broken.json" 2>/dev/null; then
             echo "::error::validator accepted a global-only option in a repo preset — the check is not doing its job"
             exit 1
