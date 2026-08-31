@@ -64,11 +64,15 @@ those entries **back** to GitHub Packages — see [Auth for private
 packages](#auth-for-private-packages) — and the next `npm ci` fails with
 `401 Unauthorized`.
 
-A site that still consumes a GitHub-Packages-only package
-(`@flowmatrix-ai/brand`, `site-generator`, `checkout-*`) must stay on
-`marketing-site`: npm scopes a registry per **scope**, not per package, so one
-repo cannot draw `@flowmatrix-ai/site-components` from npmjs and
-`@flowmatrix-ai/brand` from GitHub Packages.
+A site that still consumes a GitHub-Packages-only package (`site-generator`,
+`checkout-*`) must stay on `marketing-site`: npm scopes a registry per **scope**,
+not per package, so one repo cannot draw `@flowmatrix-ai/site-components` from
+npmjs and `@flowmatrix-ai/checkout-ui` from GitHub Packages.
+
+`@flowmatrix-ai/brand` used to be on that list. It went public on 2026-08-31, so
+the three FlowMatrix-owned properties that depend on it — `site-flowmatrixai-main`,
+`site-flowmatrixai-studio` and `flowmatrixai-org` — are no longer pinned to
+GitHub Packages by it.
 
 **Usage:**
 ```json
