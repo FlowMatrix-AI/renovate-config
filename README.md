@@ -53,10 +53,42 @@ Extends `default`. For repos consuming `@flowmatrix-ai/site-components`. Adds:
 }
 ```
 
+### `npmjs-scope` — Point the `@flowmatrix-ai` scope at public npm
+
+A single-purpose fragment, meant to be extended **alongside** another preset:
+
+```json
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "local>FlowMatrix-AI/renovate-config",
+    "local>FlowMatrix-AI/renovate-config:npmjs-scope"
+  ]
+}
+```
+
+Use it in any repo whose `@flowmatrix-ai` dependencies are all on npmjs — since
+2026-08-31 that is everything except `site-generator` and the eight
+`checkout-*` packages.
+
+**Why it is load-bearing.** `default.json` sets `npmrc` for the whole scope, and
+that is not merely a lookup setting: it is what Renovate hands to `npm`/`pnpm`
+when it **regenerates a lockfile**, so it decides the `resolved` URLs that get
+committed. A repo that has dropped its `.npmrc` but still inherits that `npmrc`
+gets its lockfile quietly rewritten back to GitHub Packages on the next lock
+refresh, and the next install fails with `401 Unauthorized`. The `registryUrls`
+packageRule does **not** prevent this — it governs version lookup only.
+
+Observed twice on 2026-08-31: `site-marketfourseasons-main#66` and, after the
+brand migration, `flowmatrixai-org#21`.
+
+A repo consuming any GitHub-Packages-only package must **not** extend this: npm
+maps a registry per **scope**, not per package.
+
 ### `site-npmjs` — Marketing sites migrated to public npm
 
-Extends `marketing-site`. Identical to it except that the `@flowmatrix-ai`
-scope points at `registry.npmjs.org` instead of GitHub Packages.
+`marketing-site` plus `npmjs-scope` — identical to `marketing-site` except that
+the `@flowmatrix-ai` scope points at `registry.npmjs.org`.
 
 Use this preset once a site's `package-lock.json` no longer contains any
 `npm.pkg.github.com` URL. On `marketing-site`, lock file maintenance rewrites

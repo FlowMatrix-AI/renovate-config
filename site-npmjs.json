@@ -1,8 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "description": "FlowMatrix-AI marketing sites that have completed the npmjs migration. Identical to `marketing-site` except that it points the `@flowmatrix-ai` scope at the public registry. This exists because `default.json` sets `npmrc` to npm.pkg.github.com, and THAT is what Renovate writes into a regenerated lockfile - the `registryUrls` packageRule in default.json only governs version LOOKUP, not the `resolved` URLs npm records. So on a migrated site (no committed .npmrc, all three @flowmatrix-ai/site-* packages published to npmjs) lock file maintenance silently rewrote every @flowmatrix-ai entry back to GitHub Packages, and the next `npm ci` died with `401 Unauthorized ... authentication token not provided` because nothing supplies a token any more. Observed on site-marketfourseasons-main#66: main carried 0 GitHub Packages URLs, the lock-file-maintenance branch carried 3. Extend THIS preset, not `marketing-site`, once a site's package-lock.json is free of npm.pkg.github.com. Sites that still consume a GitHub-Packages-only package (site-generator, checkout-*) must stay on `marketing-site` - npm scopes a registry per SCOPE, not per package, so the two cannot be mixed in one repo. @flowmatrix-ai/brand WAS in that list and is not any more: it went public on 2026-08-31 (brand#92), which is what makes site-flowmatrixai-main and site-flowmatrixai-studio eligible for this preset once their lockfiles resolve brand from npmjs.",
+  "description": "FlowMatrix-AI marketing sites that have completed the npmjs migration: `marketing-site` plus `npmjs-scope`. The registry override lives in npmjs-scope so that non-site repos (flowmatrixai-org, creative-engine, client-portal, md-reporter) can take the same protection without inheriting the marketing-site grouping rules. Extend THIS preset, not `marketing-site`, once a site's package-lock.json is free of npm.pkg.github.com. See npmjs-scope.json for why the override is load-bearing rather than cosmetic. Sites that still consume a GitHub-Packages-only package (site-generator, checkout-*) must stay on `marketing-site` - npm scopes a registry per SCOPE, not per package.",
   "extends": [
-    "local>FlowMatrix-AI/renovate-config:marketing-site"
-  ],
-  "npmrc": "@flowmatrix-ai:registry=https://registry.npmjs.org"
+    "local>FlowMatrix-AI/renovate-config:marketing-site",
+    "local>FlowMatrix-AI/renovate-config:npmjs-scope"
+  ]
 }
