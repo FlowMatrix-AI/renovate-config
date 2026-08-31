@@ -21,8 +21,12 @@
   },
   "npmrc": "@flowmatrix-ai:registry=https://npm.pkg.github.com",
   "lockFileMaintenance": {
+    "description": "Renovate's own default for this block is `schedule: [\"before 4am on monday\"]`, which is NARROWER than the org schedule above and is NOT overridden by it - a top-level schedule does not reach into an update-type block that ships its own. So lock file maintenance only ran when the hosted bot happened to reach a repo before 4am, and was skipped outright on the ~37% of runs that land later in the Monday window. Every one of the 5 scheduled lock-file-maintenance PRs the fleet has ever produced was created before 4am local; none after. This matters more than it looks: lock file maintenance is the ONLY mechanism here that can move a TRANSITIVE pin, so while it was skipped, transitive advisories had no remediation path at all - 12 open Dependabot alerts across 7 repos accumulated behind it, every one of them already satisfiable by the parent's existing range. Pin the schedule to the org window explicitly so it stops inheriting the narrower default. Related: #27 (Monday-only scheduling problems generally).",
     "enabled": true,
-    "automerge": true
+    "automerge": true,
+    "schedule": [
+      "before 7am on Monday"
+    ]
   },
   "vulnerabilityAlerts": {
     "description": "Renovate's built-in default for this block sets groupName: null, which OVERRIDES any groupName a packageRules entry would otherwise apply. A security update is therefore deliberately un-grouped - fine for a self-contained dependency, actively harmful for an ecosystem whose packages must move together. Re-establish grouping for those ecosystems here. The outer groupName stays null so unrelated security fixes are still not batched; schedule and minimumReleaseAge are pinned to Renovate's vulnerabilityAlerts defaults explicitly so a security fix is never held by the Monday schedule or the 3-day soak above. Rule of thumb: if packages are grouped because a partial update breaks the build, that grouping MUST be repeated here. See #31.",
