@@ -53,6 +53,31 @@ Extends `default`. For repos consuming `@flowmatrix-ai/site-components`. Adds:
 }
 ```
 
+### `site-npmjs` — Marketing sites migrated to public npm
+
+Extends `marketing-site`. Identical to it except that the `@flowmatrix-ai`
+scope points at `registry.npmjs.org` instead of GitHub Packages.
+
+Use this preset once a site's `package-lock.json` no longer contains any
+`npm.pkg.github.com` URL. On `marketing-site`, lock file maintenance rewrites
+those entries **back** to GitHub Packages — see [Auth for private
+packages](#auth-for-private-packages) — and the next `npm ci` fails with
+`401 Unauthorized`.
+
+A site that still consumes a GitHub-Packages-only package
+(`@flowmatrix-ai/brand`, `site-generator`, `checkout-*`) must stay on
+`marketing-site`: npm scopes a registry per **scope**, not per package, so one
+repo cannot draw `@flowmatrix-ai/site-components` from npmjs and
+`@flowmatrix-ai/brand` from GitHub Packages.
+
+**Usage:**
+```json
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["local>FlowMatrix-AI/renovate-config:site-npmjs"]
+}
+```
+
 ## Required repo setting: "Allow auto-merge"
 
 The presets above set `automerge: true` on low-risk update types, but that only
@@ -73,7 +98,7 @@ on; the drift-audit flags any fleet repo where it regresses (`auto-merge-off`).
 
 ## Auth for private packages
 
-The `npmrc` entry in `marketing-site.json` points the `@flowmatrix-ai` scope at
+The `npmrc` entry in `default.json` points the `@flowmatrix-ai` scope at
 `npm.pkg.github.com`; the Renovate GitHub App's auto-provisioned installation
 token is used for lookups. (An empty `hostRules` entry was removed in
 [`52d8074`](https://github.com/FlowMatrix-AI/renovate-config/commit/52d8074)
@@ -81,3 +106,10 @@ because it clobbered that auto-provisioned token.) If the App token lacks
 `packages:read`, add an encrypted PAT via
 [Renovate's encryption endpoint](https://app.renovatebot.com/encrypt) under a
 `hostRules` entry.
+
+**`npmrc` is not only a lookup setting.** It is also what Renovate hands to
+`npm`/`pnpm` when it regenerates a lockfile, so it decides the `resolved` URLs
+that get committed. The `registryUrls` packageRule for the three
+`@flowmatrix-ai/site-*` packages governs lookup **only** and does not change
+what lands in the lock. That is why a migrated site needs the `site-npmjs`
+preset rather than the packageRule alone.
