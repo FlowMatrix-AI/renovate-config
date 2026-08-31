@@ -21,6 +21,11 @@ Safe for **any** repo type (Node, Python, Terraform, etc.). Provides:
   fire before the cooldown elapses.
 - **`osvVulnerabilityAlerts: true`** — vulnerability alerts from the OSV
   database in addition to GitHub advisories.
+- **TypeScript majors held** behind Dependency-Dashboard approval. TS 7 is a
+  native compiler that does not yet ship the programmatic API `astro check`
+  loads, and it also breaks plain workspace typechecks and at least one app
+  build. The hold keeps the major visible and one-click on the dashboard rather
+  than silently dropping it. Minor and patch still flow normally.
 
 **Usage:**
 ```json

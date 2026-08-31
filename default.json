@@ -126,6 +126,16 @@
       "automerge": true
     },
     {
+      "description": "Hold TypeScript MAJOR behind Dependency-Dashboard approval instead of auto-opening a PR. TS7 (Go-native, GA 2026-07-08) is a native compiler that does not yet ship the programmatic API `astro check` loads, so `@astrojs/check` refuses it outright: \"The TypeScript module loaded (found 7.0.2) does not expose the programmatic API that `astro check` relies on ... run `astro check` with a TypeScript version that still provides it (6.x)\" (flowmatrixai-org#30, 2026-08-31). It is not only an Astro problem: checkout-site-engine#178 failed in the plain workspace typecheck with TS2591/TS2304 on the @types/node globals, and client-portal#109 died inside its own build with `TypeError: Cannot read properties of undefined (reading 'Cjs')`. So there are at least three independent blockers, and widening the @astrojs/check peer range will not be enough on its own. THIS RULE LIVED ONLY IN marketing-site.json UNTIL 2026-08-31, which meant every repo on the bare default preset kept opening a TS7 PR that cannot pass -- five of them in one Renovate run (client-portal, creative-engine, flowmatrixai-org, marketing-site-engine, site-flowmatrixai-main). Dashboard approval keeps the major VISIBLE and one-click (never silently dropped, as allowedVersions would), so it is not forgotten: tick the box to re-test once the ecosystem catches up. TS minor/patch still auto-flow.",
+      "matchPackageNames": [
+        "typescript"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "dependencyDashboardApproval": true
+    },
+    {
       "description": "Do not let Renovate manage engines.npm. Renovate proposes npm LATEST for that field (12.0.2 today), but npm ships bundled with node and no node ships one that far ahead -- node 24.19.0 ships npm 11.17.0 -- so the proposed engines pair is unsatisfiable. Where a repo enforces it the build dies outright (the-hunt-advisory-site#53: EBADENGINE on every job including Vercel, because that repo sets engine-strict=true deliberately -- npm <11.6 silently strips the `libc` field from package-lock.json). Where it is not enforced the incoherence is simply invisible: as of 2026-08-28 four repos declared npm >=12.0.2 and one >=11.19.0 on node that ships 11.17.0, all green. An npm floor is a policy pin about a known bug, so it is set by hand. engines.node is deliberately still managed -- only npm is held.",
       "matchDepTypes": [
         "engines"
