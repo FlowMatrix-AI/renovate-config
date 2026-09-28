@@ -119,6 +119,33 @@ GitHub Packages by it.
 }
 ```
 
+## Onboarding a repo: `renovate.json` is not enough
+
+Renovate on this org has **two independent switches**, and a repo gets PRs only
+when both are on:
+
+1. **The GitHub App installation.** It is installed org-wide with access to all
+   repositories, so every repo is already in scope. Check it with
+   `gh api /orgs/FlowMatrix-AI/installations`.
+2. **Per-repo activation in the Mend portal**
+   (`developer.mend.io/github/FlowMatrix-AI/<repo>` → *Dependency Updates
+   (Renovate)*): `Disabled`, `Silent` or `Interactive`. It is **not visible from
+   the GitHub API**. A new repo must be set to **`Interactive`**. `Silent` runs
+   lookups and fills the dashboard but opens **no PRs**.
+
+So "Renovate isn't running here" is usually the second switch, not a
+permissions problem. Judge it from the repo, not from the portal's status text,
+which has shown states the repo contradicted. A repo where Renovate is really
+active has all three of:
+
+- one or more `renovate/*` branches
+- a `Dependency Dashboard` issue authored by `app/renovate`
+- Renovate-authored PRs
+
+Absent all three: the portal switch is off. A dashboard issue with no PRs:
+`Silent`. Present but stale: a config or schedule problem. The first run after
+activation ignores the preset's schedule, so PRs can appear within minutes.
+
 ## Required repo setting: "Allow auto-merge"
 
 The presets above set `automerge: true` on low-risk update types, but that only
