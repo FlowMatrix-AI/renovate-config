@@ -123,6 +123,18 @@
       "automerge": true
     },
     {
+      "description": "No release-age soak for digest and pin updates of FlowMatrix-AI's OWN repositories (the reusable workflows in FlowMatrix-AI/.github, mainly). minimumReleaseAge is a supply-chain cooldown against a compromised or yanked THIRD-PARTY release; a commit to one of our own repos gains nothing from it. It also deadlocked them. A digest of a branch ref (`@<sha> # main`) has no release to take a timestamp from, and Renovate's default minimumReleaseAgeBehaviour is timestamp-required, so it marks the update pending indefinitely. With internalChecksFilter strict, renovate/stability-days then never goes green. On 2026-09-28, six open `flowmatrix-ai/.github digest to fdd0291` PRs (agent-ops#15, workstation-configs#25, client-portal#115, portal-infra#61, company-docs#3, creative-engine#72) were pending on it 23 days after fdd0291 was committed, all other checks green. The regex matches the org's repos (FlowMatrix-AI/<repo>) and NOT the @flowmatrix-ai npm packages, which keep the soak. Majors, minors and patches of our own repos keep it too. See #27.",
+      "matchPackageNames": [
+        "/^flowmatrix-ai\\//i"
+      ],
+      "matchUpdateTypes": [
+        "digest",
+        "pinDigest",
+        "pin"
+      ],
+      "minimumReleaseAge": null
+    },
+    {
       "description": "Conservative automerge: stable (>=1.0.0) patch updates for language + CI-action managers only. Terraform/Docker/custom excluded; minors/majors stay manual.",
       "matchManagers": [
         "github-actions",
