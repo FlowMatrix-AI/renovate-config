@@ -29,6 +29,11 @@ EXEMPT = {
         "private packages: the GitHub/OSV advisory databases do not cover them, "
         "so vulnerabilityAlerts can never fire for this set"
     ),
+    frozenset({"node", "npm"}): (
+        "batching convenience, not a must-move-together set: node and npm build "
+        "fine apart, and with groupName null a node fix still shares one branch "
+        "across .nvmrc/engines/setup-node because the branch topic is the dep name"
+    ),
 }
 
 

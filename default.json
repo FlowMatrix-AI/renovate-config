@@ -105,6 +105,18 @@
       "separateMajorMinor": false
     },
     {
+      "description": "Group the Node.js runtime and the npm CLI into one `ci-tooling` PR per repo. Node already shares one branch across .nvmrc, setup-node, mise and engines.node (Renovate's branch topic is the dep name), but any rule that sets a groupName for a manager splits it. marketing-site.json's `npm non-major` group, for one, pulls engines.node out, so every site got two PRs for one Node release: `update node.js to >=24.21.0` inside npm non-major, and `update node.js to v24.21.0` for .nvmrc (e.g. site-omws-main#92 and #93, 2026-09-14). This rule re-joins them. It matches the node-version and npm datasources only, so a Docker `node` image keeps its own PR. engines.npm stays disabled by the rule below, so npm only joins via packageManager. Tailwind is NOT in this group: it has its own set rules. No automerge key: the group automerges only if every update in it would have. See #18.",
+      "matchDatasources": [
+        "node-version",
+        "npm"
+      ],
+      "matchPackageNames": [
+        "node",
+        "npm"
+      ],
+      "groupName": "ci-tooling"
+    },
+    {
       "description": "Conservative automerge: digest/pin updates for language + CI-action managers only. Terraform/Docker/custom (i.e. infra) are excluded so they stay manual. Gated by required ok + gitleaks checks.",
       "matchManagers": [
         "github-actions",
