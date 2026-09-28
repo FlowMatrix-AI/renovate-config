@@ -21,6 +21,12 @@ Safe for **any** repo type (Node, Python, Terraform, etc.). Provides:
   fire before the cooldown elapses.
 - **`osvVulnerabilityAlerts: true`** — vulnerability alerts from the OSV
   database in addition to GitHub advisories.
+- **`constraints.npm: "^12"`** — the npm Renovate runs when it regenerates a
+  lockfile. It must satisfy every `engines.npm` floor in the fleet (several
+  sites declare `>=12.0.2`), or Renovate writes lockfiles with an npm the repo
+  says it does not support. `engines.npm` itself is not managed by Renovate
+  (see the rule in `default.json`), so move this constraint by hand when the
+  fleet's floor moves.
 - **TypeScript majors held** behind Dependency-Dashboard approval. TS 7 is a
   native compiler that does not yet ship the programmatic API `astro check`
   loads, and it also breaks plain workspace typechecks and at least one app
