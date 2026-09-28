@@ -117,6 +117,17 @@
       "groupName": "ci-tooling"
     },
     {
+      "description": "Look checkov up on PyPI, not GitHub tags. Renovate's mise manager maps `checkov` to the github-tags datasource on bridgecrewio/checkov, and on the hosted bot that lookup fails with `Failed to look up github-tags package bridgecrewio/checkov: no-result` in some repos but not others. On 2026-09-28, infra-modules (pin 3.3.7), gcp-infra (3.3.15) and managed-apps-infra (3.3.19) showed the warning. foundation-infra and portal-infra, on the same preset, were offered 3.3.19. A failed lookup freezes the pin on a security scanner with no PR and no error outside the dashboard. checkov publishes every release to PyPI under the same version string (3.3.20 on both today), and the PyPI JSON API is a single request, not a paginated tag listing. overrideDatasource/overridePackageName reroute only this lookup. See #24.",
+      "matchManagers": [
+        "mise"
+      ],
+      "matchDepNames": [
+        "checkov"
+      ],
+      "overrideDatasource": "pypi",
+      "overridePackageName": "checkov"
+    },
+    {
       "description": "Conservative automerge: digest/pin updates for language + CI-action managers only. Terraform/Docker/custom (i.e. infra) are excluded so they stay manual. Gated by required ok + gitleaks checks.",
       "matchManagers": [
         "github-actions",
