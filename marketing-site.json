@@ -34,6 +34,18 @@
       "automerge": true
     },
     {
+      "description": "Carried here as well as in default.json for the same reason as the astro and cloudflare rules: this preset's `npm non-major` and `github-actions non-major` groups would otherwise claim engines.node and a setup-node `node-version`, splitting them from .nvmrc. Must come after both. See default.json and #18.",
+      "matchDatasources": [
+        "node-version",
+        "npm"
+      ],
+      "matchPackageNames": [
+        "node",
+        "npm"
+      ],
+      "groupName": "ci-tooling"
+    },
+    {
       "description": "Group Tailwind packages together (all update types)",
       "matchPackageNames": [
         "tailwindcss",
