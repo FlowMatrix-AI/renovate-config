@@ -30,8 +30,9 @@ Safe for **any** repo type (Node, Python, Terraform, etc.). Provides:
   to `none`, and then refuses to fetch a lockfile entry with a tarball URL
   (tailwind 4's `@tailwindcss/oxide-wasm32-wasi` is one, in every site). The
   `npmrc` in `default.json` and `npmjs-scope.json` therefore carries
-  `allow-remote=all`, npm 11's default. A repo with its own committed
-  `.npmrc` does not get the preset `npmrc`, so it needs that line itself.
+  `allow-remote=all`, npm 11's default. That reaches every consumer: with
+  `npmrcMerge` off (the default), Renovate uses the preset `npmrc` in place
+  of a repo's own `.npmrc`.
 - **TypeScript majors held** behind Dependency-Dashboard approval. TS 7 is a
   native compiler that does not yet ship the programmatic API `astro check`
   loads, and it also breaks plain workspace typechecks and at least one app
