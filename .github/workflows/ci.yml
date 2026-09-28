@@ -87,6 +87,28 @@ jobs:
       - name: Check ecosystem groups are coherent under vulnerabilityAlerts
         run: python3 scripts/check-group-coherence.py
 
+      # The validator does not resolve `extends`, so a dangling reference to a
+      # preset in this repo validates clean. See the script's docstring and #36.
+      - name: Check preset references resolve
+        run: python3 scripts/check-preset-references.py
+
+      - name: Prove the reference check can fail
+        run: |
+          set -euo pipefail
+          tmp=$(mktemp -d)
+          cp ./*.json README.md "$tmp/"
+          echo '{"extends":["local>FlowMatrix-AI/renovate-config:no-such-preset"]}' > "$tmp/bogus.json"
+          if python3 scripts/check-preset-references.py "$tmp" >/dev/null; then
+            echo "::error::reference check accepted a preset name with no file"
+            exit 1
+          fi
+          rm "$tmp/bogus.json" "$tmp/marketing-site.json"
+          if python3 scripts/check-preset-references.py "$tmp" >/dev/null; then
+            echo "::error::reference check accepted a deleted published preset"
+            exit 1
+          fi
+          echo "ok: reference check rejects a dangling reference and a deleted preset"
+
   # Standardized org-wide required check (see require-ci-ok ruleset).
   ok:
     name: ok
