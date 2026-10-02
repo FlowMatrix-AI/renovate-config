@@ -17,9 +17,9 @@
   "internalChecksFilter": "strict",
   "osvVulnerabilityAlerts": true,
   "constraints": {
-    "npm": "^11"
+    "npm": "^12"
   },
-  "npmrc": "@flowmatrix-ai:registry=https://npm.pkg.github.com",
+  "npmrc": "@flowmatrix-ai:registry=https://npm.pkg.github.com\nallow-remote=all",
   "lockFileMaintenance": {
     "description": "Renovate's own default for this block is `schedule: [\"before 4am on monday\"]`, which is NARROWER than the org schedule above and is NOT overridden by it - a top-level schedule does not reach into an update-type block that ships its own. So lock file maintenance only ran when the hosted bot happened to reach a repo before 4am, and was skipped outright on the ~37% of runs that land later in the Monday window. Every one of the 5 scheduled lock-file-maintenance PRs the fleet has ever produced was created before 4am local; none after. This matters more than it looks: lock file maintenance is the ONLY mechanism here that can move a TRANSITIVE pin, so while it was skipped, transitive advisories had no remediation path at all - 12 open Dependabot alerts across 7 repos accumulated behind it, every one of them already satisfiable by the parent's existing range. Pin the schedule to the org window explicitly so it stops inheriting the narrower default. Related: #27 (Monday-only scheduling problems generally).",
     "enabled": true,
