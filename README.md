@@ -10,7 +10,9 @@ Safe for **any** repo type (Node, Python, Terraform, etc.). Provides:
 
 - Weekly schedule (before 7am Monday, Eastern)
 - `dependencies` label on PRs
-- Max 5 concurrent PRs
+- Max 5 concurrent PRs, no hourly limit (`prHourlyLimit: 0`). Renovate's
+  default of 2 per hour capped each run in the Monday window at 2 PRs, and
+  lock file maintenance was the update left waiting a week (#60).
 - Renovate's `config:recommended` base
 - **Supply-chain cooldown:** `minimumReleaseAge: "3 days"` — a freshly
   published version is not eligible until it has been public for 3 days,
