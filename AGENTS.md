@@ -54,7 +54,7 @@ because a hand-written list is how a new preset ships unvalidated.
 
 | Preset | What it is |
 | --- | --- |
-| `default.json` | Org baseline, safe for any repo type. Monday schedule (America/New_York), `dependencies` label, `prConcurrentLimit: 5`, `prHourlyLimit: 0`, `minimumReleaseAge: "3 days"`, `internalChecksFilter: "strict"`, `osvVulnerabilityAlerts`, `constraints.npm`, the `@flowmatrix-ai` `npmrc`, TypeScript majors held behind dashboard approval. |
+| `default.json` | Org baseline, safe for any repo type. Monday schedule (America/New_York), `dependencies` label, `prConcurrentLimit: 5`, `prHourlyLimit: 0`, `minimumReleaseAge: "3 days"`, `internalChecksFilter: "strict"`, `osvVulnerabilityAlerts`, `constraints.npm`, the `@flowmatrix-ai` `npmrc`, TypeScript and pnpm majors held behind dashboard approval. |
 | `marketing-site.json` | Extends `default`. GitHub Packages scope auth, grouped + automerged non-major npm/Actions/Tailwind, `@flowmatrix-ai/*` grouped but **not** automerged, and a final rule forcing `automerge: false` on every `major`. |
 | `npmjs-scope.json` | Single-purpose fragment that points the `@flowmatrix-ai` scope at `registry.npmjs.org`. Extended **alongside** another preset. |
 | `site-npmjs.json` | `marketing-site` + `npmjs-scope`. |
