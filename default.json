@@ -129,6 +129,16 @@
       "overridePackageName": "checkov"
     },
     {
+      "description": "Rewrite Go import paths on a module major bump, and tidy go.sum. A Go major lives at a new module path (`.../v93`), so a bump that only edits go.mod adds the new `require` while every import still names the old major: the PR builds against the old version and changes nothing, or fails go.sum verification. Observed 2026-10-23 on a go-github v90 -> v93 PR, fixed by hand (imports moved, old require dropped, go.sum updated). gomodUpdateImportPaths does the import rewrite; gomodTidy drops the stale require and the go.sum lines it leaves behind.",
+      "matchManagers": [
+        "gomod"
+      ],
+      "postUpdateOptions": [
+        "gomodUpdateImportPaths",
+        "gomodTidy"
+      ]
+    },
+    {
       "description": "Conservative automerge: digest/pin updates for language + CI-action managers only. Terraform/Docker/custom (i.e. infra) are excluded so they stay manual. Gated by required ok + gitleaks checks.",
       "matchManagers": [
         "github-actions",
