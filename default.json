@@ -58,6 +58,14 @@
           "@cloudflare/*"
         ],
         "groupName": "cloudflare security"
+      },
+      {
+        "description": "The Stripe browser SDK and its React bindings must move as a set under a security advisory too: each react-stripe-js major peers exactly one stripe-js major. Same shape as the rules above.",
+        "matchPackageNames": [
+          "@stripe/stripe-js",
+          "@stripe/react-stripe-js"
+        ],
+        "groupName": "stripe browser sdk security"
       }
     ]
   },
@@ -103,6 +111,15 @@
         "@cloudflare/*"
       ],
       "groupName": "cloudflare",
+      "separateMajorMinor": false
+    },
+    {
+      "description": "Group the Stripe browser SDK with its React bindings, majors included. Each @stripe/react-stripe-js major peers exactly one @stripe/stripe-js major (6.x wants >=9.16.0 <10, 7.0.0 wants >=10 <11), so the two can only move together. As separate PRs neither resolves: Renovate's lockfile regeneration fails with ERESOLVE (renovate/artifacts) and CI's `npm ci` reports a lockfile mismatch. Observed 2026-10-05 to 10-23 on an org site, both PRs red for 18 days. separateMajorMinor:false for the same reason as the cloudflare rule. The stripe server SDK (`stripe`) is not in the set: it versions independently.",
+      "matchPackageNames": [
+        "@stripe/stripe-js",
+        "@stripe/react-stripe-js"
+      ],
+      "groupName": "stripe browser sdk",
       "separateMajorMinor": false
     },
     {
