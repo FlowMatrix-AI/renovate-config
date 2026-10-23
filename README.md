@@ -40,6 +40,9 @@ Safe for **any** repo type (Node, Python, Terraform, etc.). Provides:
   loads, and it also breaks plain workspace typechecks and at least one app
   build. The hold keeps the major visible and one-click on the dashboard rather
   than silently dropping it. Minor and patch still flow normally.
+- **pnpm majors held** the same way. pnpm 12's lockfile is not parsed by
+  GitHub's dependency graph, so a repo moved to it loses its Dependabot alerts
+  without any error. Tick the box once the graph reads pnpm 12 lockfiles.
 
 **Usage:**
 ```json
