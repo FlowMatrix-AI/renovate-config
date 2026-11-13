@@ -43,6 +43,10 @@ Safe for **any** repo type (Node, Python, Terraform, etc.). Provides:
 - **pnpm majors held** the same way. pnpm 12's lockfile is not parsed by
   GitHub's dependency graph, so a repo moved to it loses its Dependabot alerts
   without any error. Tick the box once the graph reads pnpm 12 lockfiles.
+- **Node majors held** the same way. The fleet's Node major is a deliberate
+  cross-repo decision made where the marketing sites are generated, not
+  something a per-repo bot PR can take on its own; without the hold, one Node
+  release opens a PR in every repo at once. Minor and patch still flow.
 
 **Usage:**
 ```json

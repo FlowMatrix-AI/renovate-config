@@ -223,6 +223,19 @@
       "dependencyDashboardApproval": true
     },
     {
+      "description": "Hold Node.js MAJOR updates behind Dependency-Dashboard approval, the same treatment as the TypeScript and pnpm majors above. The fleet's Node major is a deliberate cross-repo decision: the generator that scaffolds the marketing sites targets one Node major and pins it in its own tests, and moving it is a documented multi-file change there, not something a per-repo bot PR can make on its own. Without this rule a new Node major opens a PR in every repo at once -- on 2026-11-13 fourteen repos had an open `update node.js to v26`. On the marketing sites those PRs can go green without proving much, because the shared build check pins its own Node version. Dashboard approval keeps the major VISIBLE and one click away, so it is taken deliberately when the fleet moves rather than silently dropped, as allowedVersions would. Minor and patch Node updates still flow through the ci-tooling group above. matchDatasources is node-version only, so a Docker `node` image keeps its own lifecycle.",
+      "matchDatasources": [
+        "node-version"
+      ],
+      "matchPackageNames": [
+        "node"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "dependencyDashboardApproval": true
+    },
+    {
       "description": "Do not let Renovate manage engines.npm. Renovate proposes npm LATEST for that field (12.0.2 today), but npm ships bundled with node and no node ships one that far ahead -- node 24.19.0 ships npm 11.17.0 -- so the proposed engines pair is unsatisfiable. Where a repo enforces it the build dies outright (the-hunt-advisory-site#53: EBADENGINE on every job including Vercel, because that repo sets engine-strict=true deliberately -- npm <11.6 silently strips the `libc` field from package-lock.json). Where it is not enforced the incoherence is simply invisible: as of 2026-08-28 four repos declared npm >=12.0.2 and one >=11.19.0 on node that ships 11.17.0, all green. An npm floor is a policy pin about a known bug, so it is set by hand. engines.node is deliberately still managed -- only npm is held.",
       "matchDepTypes": [
         "engines"
