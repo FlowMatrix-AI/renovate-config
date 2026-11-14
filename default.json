@@ -203,6 +203,19 @@
       "automerge": true
     },
     {
+      "description": "Automerge Node.js runtime PATCH updates wherever the version lives (.nvmrc, mise, setup-node, engines.node). The conservative patch rule above lists language and CI-action managers only, so the `nvm` and `mise` copies of a Node version never qualify; and because rule `ci-tooling` groups every copy into one PR, which automerges only if every member would, one .nvmrc line held the whole Node patch back. Observed 2026-11-14: ten repos sat on an unmerged Node 24.22.3 patch, a security release, behind green CI. Scoped by datasource and package name rather than by adding `mise`/`nvm` to the manager list, so Terraform, tflint and other mise-managed tools stay manual as that rule intends. Majors and minors are untouched.",
+      "matchDatasources": [
+        "node-version"
+      ],
+      "matchPackageNames": [
+        "node"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "automerge": true
+    },
+    {
       "description": "Hold TypeScript MAJOR behind Dependency-Dashboard approval instead of auto-opening a PR. TS7 (Go-native, GA 2026-07-08) is a native compiler that does not yet ship the programmatic API `astro check` loads, so `@astrojs/check` refuses it outright: \"The TypeScript module loaded (found 7.0.2) does not expose the programmatic API that `astro check` relies on ... run `astro check` with a TypeScript version that still provides it (6.x)\" (flowmatrixai-org#30, 2026-08-31). It is not only an Astro problem: checkout-site-engine#178 failed in the plain workspace typecheck with TS2591/TS2304 on the @types/node globals, and client-portal#109 died inside its own build with `TypeError: Cannot read properties of undefined (reading 'Cjs')`. So there are at least three independent blockers, and widening the @astrojs/check peer range will not be enough on its own. THIS RULE LIVED ONLY IN marketing-site.json UNTIL 2026-08-31, which meant every repo on the bare default preset kept opening a TS7 PR that cannot pass -- five of them in one Renovate run (client-portal, creative-engine, flowmatrixai-org, marketing-site-engine, site-flowmatrixai-main). Dashboard approval keeps the major VISIBLE and one-click (never silently dropped, as allowedVersions would), so it is not forgotten: tick the box to re-test once the ecosystem catches up. TS minor/patch still auto-flow.",
       "matchPackageNames": [
         "typescript"
