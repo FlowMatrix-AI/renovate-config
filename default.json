@@ -81,6 +81,18 @@
       ],
       "datasourceTemplate": "github-releases",
       "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Surface Terraform modules pinned by COMMIT SHA with the release tag in a trailing comment: `source = \"git::https://github.com/<owner>/<repo>.git//<path>?ref=<40-hex-sha>\" # vX.Y.Z`. That shape keeps a module source immutable (a tag can be moved, a commit cannot), but Renovate's built-in terraform manager only updates a git source whose `ref` is itself a version: with a SHA there is nothing to compare, so it extracts no dependency and the pin freezes silently at whatever was written by hand. The `# vX.Y.Z` comment convention is understood by the github-actions and dockerfile managers, not this one. Capturing the SHA as currentDigest and the comment as currentValue against github-tags makes Renovate propose the newer tag and rewrite BOTH in one edit, the SHA to that tag's commit and the comment to its name, so the pin stays immutable and readable. Deliberately GENERIC like the manager above: it matches the shape and takes owner/repo from the file being scanned, so this public preset names no repository. Only `.tf` files, only github.com git sources, only a full 40-character SHA followed by a three-part `vX.Y.Z` comment; a tag or branch ref is left to the built-in manager. github-tags resolves a private repository only where the Renovate app is installed on it.",
+      "managerFilePatterns": [
+        "/\\.tf$/"
+      ],
+      "matchStrings": [
+        "git::https://github\\.com/(?<depName>[\\w.-]+/[\\w.-]+?)(?:\\.git)?//[^?\"\\s]*\\?ref=(?<currentDigest>[a-f0-9]{40})\"\\s*#\\s*(?<currentValue>v\\d+\\.\\d+\\.\\d+)"
+      ],
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "semver"
     }
   ],
   "packageRules": [
